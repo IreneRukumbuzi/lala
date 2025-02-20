@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/LoginPage";
 import PropertyDetails from "./pages/PropertyDetails";
@@ -21,8 +26,14 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-          <Route path="/" element={<RoleBasedRoute />} />
+          <Route
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/" element={<RoleBasedRoute />} />
             <Route path="/properties/:id" element={<PropertyDetails />} />
           </Route>
         </Routes>

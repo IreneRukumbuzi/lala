@@ -40,6 +40,7 @@ export const getAllProperties = async (req, res) => {
     const { count, rows: properties } = await Property.findAndCountAll({
       limit,
       offset,
+      order: [["createdAt", "DESC"]],
     });
 
     res.json({
@@ -69,6 +70,7 @@ export const getHostProperties = async (req, res) => {
       },
       limit,
       offset,
+      order: [["createdAt", "DESC"]],
     });
 
     res.json({

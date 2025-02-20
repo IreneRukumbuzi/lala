@@ -1,14 +1,16 @@
 import Booking from "../models/Booking.js";
 import Property from "../models/Property.js";
+import User from "../models/User.js";
 import { Op } from "sequelize";
 
 export const createBooking = async (req, res) => {
   try {
     const { propertyId, checkInDate, checkOutDate } = req.body;
-    const renterId = req.user.id
+    const renterId = req.user.id;
 
     const property = await Property.findByPk(propertyId);
-    if (!property) return res.status(404).json({ message: "Property not found" });
+    if (!property)
+      return res.status(404).json({ message: "Property not found" });
 
     const conflictingBooking = await Booking.findOne({
       where: {
@@ -26,7 +28,9 @@ export const createBooking = async (req, res) => {
     });
 
     if (conflictingBooking) {
-      return res.status(400).json({ message: "Property is already booked for these dates" });
+      return res
+        .status(400)
+        .json({ message: "Property is already booked for these dates" });
     }
 
     const booking = await Booking.create({
@@ -46,33 +50,39 @@ export const createBooking = async (req, res) => {
 export const getBookingsForProperty = async (req, res) => {
   try {
     const { propertyId } = req.params;
-    const bookings = await Booking.findAll({ where: { propertyId } });
+
+    const bookings = await Booking.findAll({
+      where: { propertyId },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "name"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch bookings", error });
   }
 };
 
-export const confirmBooking = async (req, res) => {
+export const updateBookingStatus = async (req, res) => {
   try {
-    const booking = await Booking.findByPk(req.params.id);
-    if (!booking) return res.status(404).json({ message: "Booking not found" });
+    const { bookingId, action } = req.params;
 
-    await booking.update({ status: "Confirmed" });
-    res.json({ message: "Booking confirmed" });
+    const booking = await Booking.findByPk(bookingId);
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    await booking.update({
+      status: `${action}ed`
+    });
+
+    res.json({ message: `Booking ${action}ed successfully`, booking });
   } catch (error) {
-    res.status(500).json({ message: "Failed to confirm booking", error });
-  }
-};
-
-export const cancelBooking = async (req, res) => {
-  try {
-    const booking = await Booking.findByPk(req.params.id);
-    if (!booking) return res.status(404).json({ message: "Booking not found" });
-
-    await booking.update({ status: "Canceled" });
-    res.json({ message: "Booking canceled" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to cancel booking", error });
+    res.status(500).json({ message: "Failed to update booking status", error });
   }
 };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Modal, Form, Input, InputNumber, Upload } from "antd";
+import { Button, Modal, Form, Input, InputNumber, Upload, notification } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import PropertyList from "../components/PropertyList";
 import api from "../utils/api";
@@ -7,6 +7,14 @@ import api from "../utils/api";
 const HostDashboard = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [form] = Form.useForm();
+
+  const openNotification = (type, message, description) => {
+    notification[type]({
+      message,
+      description,
+      placement: "topRight",
+    });
+  };
 
   const handleCreateProperty = async () => {
     try {
@@ -27,8 +35,22 @@ const HostDashboard = () => {
 
       setShowCreateModal(false);
       form.resetFields();
+
+      // Show success notification
+      openNotification(
+        "success",
+        "Property Created",
+        "Your property has been successfully added."
+      );
     } catch (error) {
       console.error("Failed to create property:", error);
+
+      // Show error notification
+      openNotification(
+        "error",
+        "Creation Failed",
+        "An error occurred while adding the property. Please try again."
+      );
     }
   };
 
