@@ -1,4 +1,5 @@
 import { useAuth } from "../context/AuthContext";
+import { Button } from "antd";
 
 const NavBar = () => {
   const { user, logout } = useAuth();
@@ -11,15 +12,12 @@ const NavBar = () => {
         {user && (
           <div className="flex items-center gap-4">
             <span className="hidden md:block text-gray-800 font-medium">
-              {user.email}
+              {user.name}
             </span>
 
-            <button
-              onClick={logout}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
-            >
+            <Button onClick={logout} type="default" danger>
               Logout
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -28,4 +26,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-

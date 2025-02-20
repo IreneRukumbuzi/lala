@@ -4,7 +4,8 @@ import { Op } from "sequelize";
 
 export const createBooking = async (req, res) => {
   try {
-    const { propertyId, renterId, checkInDate, checkOutDate } = req.body;
+    const { propertyId, checkInDate, checkOutDate } = req.body;
+    const renterId = req.user.id
 
     const property = await Property.findByPk(propertyId);
     if (!property) return res.status(404).json({ message: "Property not found" });

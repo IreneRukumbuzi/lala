@@ -4,7 +4,8 @@ import { uploadToCloudinary } from "../utils/cloudinary.js";
 
 export const createProperty = async (req, res) => {
   try {
-    const { title, description, pricePerNight, location, hostId } = req.body;
+    const { title, description, pricePerNight, location } = req.body;
+    const hostId = req.user.id;
 
     let fileUrl = null;
     if (req.file) {
@@ -37,6 +38,35 @@ export const getAllProperties = async (req, res) => {
     const offset = (page - 1) * limit;
 
     const { count, rows: properties } = await Property.findAndCountAll({
+      limit,
+      offset,
+    });
+
+    res.json({
+      totalProperties: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      pageSize: limit,
+      properties,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to retrieve properties", error });
+  }
+};
+
+export const getHostProperties = async (req, res) => {
+  try {
+    let { page, limit } = req.query;
+    const hostId = req.user?.id
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows: properties } = await Property.findAndCountAll({
+      where: {
+        hostId,
+      },
       limit,
       offset,
     });

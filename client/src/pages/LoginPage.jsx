@@ -41,7 +41,7 @@ const Login = () => {
             Lala Rentals
           </h1>
           <p className="text-sm md:text-xl text-white font-normal">
-            Welcome to Lala Rentals
+            Welcome to LaLa Rentals – Your Gateway to Dream Homes!
           </p>
         </div>
       </div>
