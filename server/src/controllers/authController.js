@@ -4,12 +4,14 @@ import { generateToken, verifyToken } from "../utils/jwtUtils.js";
 export const googleAuthCallback = (req, res) => {
   const { user } = req;
   const token = generateToken(user);
+
+  const frontendUrl = process.env.FRONTEND_URL
   
   const userString = JSON.stringify(user)
 
   res.send(`
     <script>
-      window.opener.postMessage({ token: "${token}", user: ${userString} }, "http://localhost:5173");
+      window.opener.postMessage({ token: "${token}", user: ${userString} }, "${frontendUrl}");
       window.close();
     </script>
   `)
