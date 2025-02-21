@@ -7,14 +7,10 @@ const Login = () => {
   const navigate = useNavigate();
 
   const googleAllowedOrigin = import.meta.env.VITE_GOOGLE_ALLOWED_ORIGIN;
-  const googleAuthUrl = `${import.meta.env.VITE_BACKEND_URL}/auth/google`
+  const googleAuthUrl = `${import.meta.env.VITE_BACKEND_URL}/auth/google`;
 
   const handleGoogleLogin = async () => {
-    window.open(
-      googleAuthUrl,
-      "_blank",
-      "width=500,height=600"
-    );
+    window.open(googleAuthUrl, "_blank", "width=500,height=600");
 
     const handleMessage = (event) => {
       if (event.origin !== googleAllowedOrigin) return;

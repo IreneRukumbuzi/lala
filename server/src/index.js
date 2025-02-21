@@ -24,6 +24,10 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.get('/', (req, res) => {
+  res.send('Welcome to the Lala Rentals API');
+});
+
 app.use("/api", routes);
 
 const startServer = async () => {

@@ -1,6 +1,6 @@
 import Property from "../models/Property.js";
 import { uploadToCloudinary } from "../utils/cloudinary.js";
-
+import { Op } from "sequelize";
 
 export const createProperty = async (req, res) => {
   try {
@@ -31,16 +31,34 @@ export const createProperty = async (req, res) => {
 
 export const getAllProperties = async (req, res) => {
   try {
-    let { page, limit } = req.query;
+    let { page, limit, search, price } = req.query;
 
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     const offset = (page - 1) * limit;
 
+    let whereClause = {};
+
+    if (search) {
+      whereClause[Op.or] = [
+        { title: { [Op.iLike]: `%${search}%` } },
+        { location: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
+
+    let order = [["createdAt", "DESC"]];
+
+    if (price === "low") {
+      order = [["pricePerNight", "ASC"]];
+    } else if (price === "high") {
+      order = [["pricePerNight", "DESC"]];
+    }  
+
     const { count, rows: properties } = await Property.findAndCountAll({
+      where: whereClause,
       limit,
       offset,
-      order: [["createdAt", "DESC"]],
+      order,
     });
 
     res.json({
@@ -51,26 +69,44 @@ export const getAllProperties = async (req, res) => {
       properties,
     });
   } catch (error) {
+    console.error("Error fetching properties:", error);
     res.status(500).json({ message: "Failed to retrieve properties", error });
   }
 };
 
 export const getHostProperties = async (req, res) => {
   try {
-    let { page, limit } = req.query;
-    const hostId = req.user?.id
+    let { page, limit, search, price } = req.query;
+    const hostId = req.user.id;
 
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     const offset = (page - 1) * limit;
 
+    let whereClause = {
+      hostId,
+    };
+
+    if (search) {
+      whereClause[Op.or] = [
+        { title: { [Op.iLike]: `%${search}%` } },
+        { location: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
+
+    let order = [["createdAt", "DESC"]];
+
+    if (price === "low") {
+      order = [["pricePerNight", "ASC"]];
+    } else if (price === "high") {
+      order = [["pricePerNight", "DESC"]];
+    }  
+
     const { count, rows: properties } = await Property.findAndCountAll({
-      where: {
-        hostId,
-      },
+      where: whereClause,
       limit,
       offset,
-      order: [["createdAt", "DESC"]],
+      order,
     });
 
     res.json({
@@ -81,10 +117,10 @@ export const getHostProperties = async (req, res) => {
       properties,
     });
   } catch (error) {
+    console.error("Error fetching properties:", error);
     res.status(500).json({ message: "Failed to retrieve properties", error });
   }
 };
-
 
 export const getPropertyById = async (req, res) => {
   try {
@@ -97,7 +133,6 @@ export const getPropertyById = async (req, res) => {
     res.status(500).json({ message: "Error retrieving property", error });
   }
 };
-
 
 export const updateProperty = async (req, res) => {
   try {
@@ -130,8 +165,6 @@ export const updateProperty = async (req, res) => {
     res.status(500).json({ message: "Failed to update property", error });
   }
 };
-
-
 
 export const deleteProperty = async (req, res) => {
   try {

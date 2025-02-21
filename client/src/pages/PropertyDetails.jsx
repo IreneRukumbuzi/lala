@@ -23,7 +23,9 @@ const PropertyDetails = () => {
         className="w-full h-72 object-cover rounded-lg"
       />
       <h1 className="text-2xl md:text-3xl font-bold mt-4">{property.title}</h1>
-      <p className="text-gray-700 text-sm md:text-base mt-2">{property.location}</p>
+      <p className="text-gray-700 text-sm md:text-base mt-2">
+        {property.location}
+      </p>
       <p className="text-gray-600 text-base mt-3">{property.description}</p>
       <p className="text-lg md:text-xl font-semibold text-gray-900 mt-3">
         ${property.pricePerNight} / night

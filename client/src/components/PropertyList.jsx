@@ -15,28 +15,25 @@ const PropertyList = ({ role }) => {
   });
 
   const [filters, setFilters] = useState({
-    location: "",
-    date: null,
+    search: "",
     price: "",
-    searchQuery: "",
   });
 
   const fetchProperties = useCallback(
     async (page = propertiesData.currentPage, updatedFilters = filters) => {
-      const { location, date, price, searchQuery } = updatedFilters;
+      const { search, price } = updatedFilters;
       const endpoint = role === "Host" ? "/properties/host" : "/properties";
 
       try {
         const response = await api.get(endpoint, {
           params: {
             page,
-            location,
-            date,
+            search,
             price,
-            search: searchQuery,
             limit: 8,
           },
         });
+
         setPropertiesData(response.data);
       } catch (error) {
         console.error("Failed to fetch properties:", error);
@@ -51,11 +48,13 @@ const PropertyList = ({ role }) => {
 
   const handlePageChange = (page) => {
     setPropertiesData((prev) => ({ ...prev, currentPage: page }));
+    fetchProperties(page);
   };
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
     setPropertiesData((prev) => ({ ...prev, currentPage: 1 }));
+    fetchProperties(1, newFilters);
   };
 
   return (
