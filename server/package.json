@@ -2,9 +2,11 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon --exec babel-node src/index.js"
+    "start": "npm run seed && node src/index.js",
+    "dev": "npm run seed && nodemon --exec babel-node src/index.js",
+    "seed": "node src/config/seed.js seed"
   },
   "keywords": [],
   "author": "",
