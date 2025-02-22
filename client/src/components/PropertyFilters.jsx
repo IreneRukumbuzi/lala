@@ -1,7 +1,8 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { Select, Button, Input } from "antd";
+import { Select, Input } from "antd";
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { debounce } from "lodash";
 
 const { Option } = Select;
 
@@ -11,8 +12,16 @@ const PropertyFilters = ({ onFilterChange }) => {
     price: "",
   });
 
+  const debouncedFilterChange = debounce((updatedFilters) => {
+    onFilterChange(updatedFilters);
+  }, 500);
+
   const handleChange = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    setFilters((prev) => {
+      const newFilters = { ...prev, [key]: value };
+      debouncedFilterChange(newFilters);
+      return newFilters;
+    });
   };
 
   return (
@@ -34,16 +43,12 @@ const PropertyFilters = ({ onFilterChange }) => {
         <Option value="low">Low to High</Option>
         <Option value="high">High to Low</Option>
       </Select>
-
-      <Button className="w-full md:w-auto" onClick={() => onFilterChange(filters)}>
-        Search
-      </Button>
     </div>
   );
 };
 
 PropertyFilters.propTypes = {
-  onFilterChange: PropTypes.func,
+  onFilterChange: PropTypes.func.isRequired,
 };
 
 export default PropertyFilters;

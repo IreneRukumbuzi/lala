@@ -6,6 +6,7 @@ const seedDatabase = async () => {
     await sequelize.sync();
     await User.bulkCreate([
       { email: "mhonore88@gmail.com", name: "Mugisha Honore", role: "Host" },
+      { email: "mugishahonore94@gmail.com", name: "Mugisha Didier", role: "Host" },
       { email: "christianishimwe90@gmail.com", name: "Ishimwe Christian", role: "Host" },
     ], { ignoreDuplicates: true });
 

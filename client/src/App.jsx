@@ -14,9 +14,7 @@ import RenterDashboard from "./pages/RenterDashboard";
 
 const RoleBasedRoute = () => {
   const { user } = useAuth();
-
   if (!user) return <Navigate to="/login" replace />;
-
   return user.role === "Host" ? <HostDashboard /> : <RenterDashboard />;
 };
 
